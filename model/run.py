@@ -62,7 +62,7 @@ def run_scan(scan: str, args: argparse.Namespace, config: dict, output: Path) ->
         built = build_one(scan, args.aligned_dir, args.canonical_dir, fs=200, bin_sec=2)
         if built["status"] == "missing":
             raise FileNotFoundError(f"Missing aligned EEG cache for {scan}. Run data/prepare.py first.")
-    if not extra.exists():
+    if any(name != "canonical" for name in args.representations) and not extra.exists():
         build_feature_cache(scan, args.aligned_dir, args.canonical_dir, args.feature_dir, False)
     with np.load(canonical, allow_pickle=False) as data:
         train_y, val_y = [data[f"{split}_y"].astype(np.float32) for split in ("train", "val")]
@@ -118,13 +118,23 @@ def compare_reference(frame: pd.DataFrame, output: Path, config: dict) -> dict:
     columns = ["val_avgR", "test_avgR", *[f"roi_{i}_R" for i in range(7)]]
     keys = ["scan", "family", "representation"]
     merged = frame.merge(reference[keys + columns], on=keys, suffixes=("", "_reference"), validate="one_to_one")
+    for source, scores in (("result", frame[columns]),
+                           ("reference", merged[[column + "_reference" for column in columns]])):
+        invalid = ~np.isfinite(scores.to_numpy(dtype=np.float64))
+        if invalid.any():
+            invalid_columns = ", ".join(scores.columns[invalid.any(axis=0)])
+            raise ValueError(f"Non-finite {source} scores in {invalid_columns}; reference verification failed")
+    roi_tolerance = float(config["reference_ridge_roi_tolerance"])
+    mean_tolerance = float(config["reference_ridge_mean_tolerance"])
+    if not np.isfinite([roi_tolerance, mean_tolerance]).all() or min(roi_tolerance, mean_tolerance) < 0:
+        raise ValueError("Reference tolerances must be finite and non-negative")
     records = []
     for _, row in merged.iterrows():
         maximum = max(abs(float(row[column]) - float(row[column + "_reference"])) for column in columns)
         mean_difference = abs(float(row.test_avgR) - float(row.test_avgR_reference))
         val_difference = abs(float(row.val_avgR) - float(row.val_avgR_reference))
-        ridge_match = (maximum <= config["reference_ridge_roi_tolerance"]
-                       and max(mean_difference, val_difference) <= config["reference_ridge_mean_tolerance"])
+        ridge_match = (maximum <= roi_tolerance
+                       and max(mean_difference, val_difference) <= mean_tolerance)
         records.append({**{key: row[key] for key in keys}, "max_absolute_score_difference": maximum,
                         "test_mean_difference": mean_difference, "validation_mean_difference": val_difference,
                         "ridge_reference_match": bool(ridge_match) if row.family == "Ridge" else None,
@@ -140,8 +150,8 @@ def compare_reference(frame: pd.DataFrame, output: Path, config: dict) -> dict:
     if mlp:
         print("[reference check] MLP runs completed, but CPU/CUDA score equivalence is not certified.", flush=True)
     return {"ridge_checked_rows": len(ridge), "ridge_within_declared_tolerances": True,
-            "ridge_mean_tolerance": config["reference_ridge_mean_tolerance"],
-            "ridge_roi_tolerance": config["reference_ridge_roi_tolerance"],
+            "ridge_mean_tolerance": mean_tolerance,
+            "ridge_roi_tolerance": roi_tolerance,
             "mlp_reference_equivalence": "not certified" if mlp else "not evaluated",
             "maximum_mlp_score_difference": max((item["max_absolute_score_difference"] for item in mlp), default=None)}
 
@@ -205,8 +215,8 @@ def main() -> None:
     if args.check_reference:
         try:
             manifest["reference_check"] = compare_reference(scans, args.output_dir, config)
-        except Exception:
-            manifest["reference_check"] = {"status": "failed; inspect reference_comparison.csv"}
+        except Exception as error:
+            manifest["reference_check"] = {"status": "failed", "error": str(error)}
             raise
         finally:
             (args.output_dir / "run_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")

@@ -27,6 +27,17 @@
     "MatchedFlatMLP"
   ],
   "cache_policy_change": "Optional backbone predictions are no longer copied",
+  "entry_point_fixes": [
+    "Canonical-only runs skip additional spectral caches",
+    "Reference checks reject non-finite scores and invalid tolerances",
+    "Failed reference checks retain the exception in run_manifest.json"
+  ],
+  "regression_tests_added_not_run": [
+    "canonical-only cache isolation",
+    "non-finite result/reference scores",
+    "invalid reference tolerances",
+    "finite matching reference scores"
+  ],
   "source_definitions_ast_checked": true,
   "local_import_paths_checked": true,
   "python_files_checked_statically": [

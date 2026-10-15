@@ -3,12 +3,16 @@ from __future__ import annotations
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from types import SimpleNamespace
+from unittest.mock import patch
 
 import numpy as np
+import pandas as pd
 import torch
 from threadpoolctl import threadpool_limits
 
 from data.features import bandpower_tokens, zscore_by_train
+from model import run as main_run
 from model.run import REPRESENTATIONS, load_representation
 from data.prepare import ROI_COLUMNS
 from model.mel import (
@@ -136,6 +140,72 @@ class ReadoutContracts(unittest.TestCase):
     def test_historical_target_storage_order_is_explicit(self):
         self.assertEqual(ROI_COLUMNS[:3], ["Thalamus", "Putamen", "Cuneus"])
         self.assertEqual(ROI_COLUMNS[6], "global signal clean")
+
+
+class EntryPointContracts(unittest.TestCase):
+    def test_canonical_only_uses_existing_canonical_cache(self):
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            canonical, output = root / "canonical", root / "output"
+            canonical.mkdir()
+            output.mkdir()
+            target = np.arange(21, dtype=np.float32).reshape(3, 7)
+            arrays = {f"{split}_tokens_z": np.zeros((3, 8, 26, 5), np.float32)
+                      for split in ("train", "val", "test")}
+            arrays.update({f"{split}_y": target for split in ("train", "val", "test")})
+            np.savez(canonical / "sub01-scan01.npz", **arrays)
+            args = SimpleNamespace(canonical_dir=canonical, feature_dir=root / "missing_features",
+                                   aligned_dir=root / "missing_eeg", representations=["canonical"],
+                                   readouts=["ridge"])
+            with patch.object(main_run, "build_one") as canonical_builder, \
+                    patch.object(main_run, "build_feature_cache") as extra_builder, \
+                    patch.object(main_run, "fit_ridge", return_value=(target, target, [1.0] * 7, {})):
+                rows = main_run.run_scan("sub01-scan01", args, {}, output)
+            canonical_builder.assert_not_called()
+            extra_builder.assert_not_called()
+            self.assertEqual(len(rows), 1)
+            self.assertFalse(args.feature_dir.exists())
+
+    def reference_frame(self):
+        return pd.DataFrame([{"scan": "sub01-scan01", "family": "Ridge",
+                              "representation": REPRESENTATIONS["canonical"][0],
+                              "val_avgR": 0.5, "test_avgR": 0.5,
+                              **{f"roi_{i}_R": 0.5 for i in range(7)}}])
+
+    def test_reference_check_rejects_nonfinite_scores(self):
+        columns = ["val_avgR", "test_avgR", *[f"roi_{i}_R" for i in range(7)]]
+        config = {"reference_ridge_roi_tolerance": 1e-3, "reference_ridge_mean_tolerance": 1e-4}
+        with TemporaryDirectory() as temporary:
+            for source in ("result", "reference"):
+                for column in columns:
+                    for value in (np.nan, np.inf, -np.inf):
+                        with self.subTest(source=source, column=column, value=value):
+                            actual, reference = self.reference_frame(), self.reference_frame()
+                            (actual if source == "result" else reference).loc[0, column] = value
+                            with patch.object(main_run.pd, "read_csv", return_value=reference):
+                                with self.assertRaisesRegex(ValueError, f"Non-finite {source} scores"):
+                                    main_run.compare_reference(actual, Path(temporary), config)
+
+    def test_reference_check_rejects_invalid_tolerances(self):
+        with TemporaryDirectory() as temporary:
+            for name in ("reference_ridge_roi_tolerance", "reference_ridge_mean_tolerance"):
+                for value in (np.nan, np.inf, -np.inf, -1.0):
+                    with self.subTest(name=name, value=value):
+                        config = {"reference_ridge_roi_tolerance": 1e-3, "reference_ridge_mean_tolerance": 1e-4}
+                        config[name] = value
+                        frame = self.reference_frame()
+                        with patch.object(main_run.pd, "read_csv", return_value=frame):
+                            with self.assertRaisesRegex(ValueError, "tolerances must be finite"):
+                                main_run.compare_reference(frame, Path(temporary), config)
+
+    def test_reference_check_accepts_finite_matching_scores(self):
+        config = {"reference_ridge_roi_tolerance": 1e-3, "reference_ridge_mean_tolerance": 1e-4}
+        frame = self.reference_frame()
+        with TemporaryDirectory() as temporary:
+            with patch.object(main_run.pd, "read_csv", return_value=frame):
+                result = main_run.compare_reference(frame, Path(temporary), config)
+            self.assertEqual(result["ridge_checked_rows"], 1)
+            self.assertTrue(result["ridge_within_declared_tolerances"])
 
 
 if __name__ == "__main__":
