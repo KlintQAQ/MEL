@@ -1,0 +1,36 @@
+cff-version: 1.2.0
+message: "If you use this research code, cite the MEL manuscript and the original data sources."
+title: "MEL: Coordinate-Preserving EEG Tokenization for fMRI Translation"
+type: software
+version: 0.1.0-rc.4
+date-released: 2026-10-16
+authors:
+  - family-names: Liu
+    given-names: Xiangyu
+  - family-names: Yan
+    given-names: Zeting
+  - family-names: Yin
+    given-names: Zhitong
+  - family-names: Li
+    given-names: Boyang
+  - family-names: Zhang
+    given-names: Xi
+license: GPL-3.0-only
+abstract: "Main-experiment implementation of MEL with four spectral representations, Ridge, matched MLP and prediction ensembling. This reorganized source release has not been rerun; historical CUDA/CPU MLP score equivalence remains uncertified."
+preferred-citation:
+  type: article
+  title: "MEL: Coordinate-Preserving EEG Tokenization for fMRI Translation"
+  authors:
+    - family-names: Liu
+      given-names: Xiangyu
+    - family-names: Yan
+      given-names: Zeting
+    - family-names: Yin
+      given-names: Zhitong
+    - family-names: Li
+      given-names: Boyang
+    - family-names: Zhang
+      given-names: Xi
+  journal: "arXiv preprint arXiv:2608.29304"
+  year: 2026
+  url: "https://arxiv.org/abs/2608.29304"

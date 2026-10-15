@@ -1,0 +1,3 @@
+-r requirements.txt
+mne==1.4.2
+eeglabio==0.0.2

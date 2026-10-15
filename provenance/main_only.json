@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-16",
+  "scope": "Main matched-readout experiment only",
+  "layout_reference": "https://github.com/yuqian2003/CANOE",
+  "layout_reference_code_copied": false,
+  "retained_experiment": [
+    "four 1040-dimensional spectral representations",
+    "33-penalty Ridge",
+    "16-hidden-unit MLP, five seeds",
+    "prediction-vector ensembling"
+  ],
+  "code_relocated_without_math_changes": [
+    "FeatureSet",
+    "set_seed",
+    "corr_per_roi",
+    "avg_corr",
+    "zscore_from_train",
+    "_binned_periodogram",
+    "_flattened_psd",
+    "_morlet_kernel",
+    "_morlet_band_energy",
+    "build_feature_cache",
+    "_corr_1d",
+    "fit_ridge",
+    "predict_torch",
+    "train_neural",
+    "MatchedFlatMLP"
+  ],
+  "cache_policy_change": "Optional backbone predictions are no longer copied",
+  "source_definitions_ast_checked": true,
+  "local_import_paths_checked": true,
+  "python_files_checked_statically": [
+    "data/__init__.py",
+    "data/features.py",
+    "data/loader.py",
+    "data/prepare.py",
+    "data/preprocessing.py",
+    "model/__init__.py",
+    "model/mel.py",
+    "model/run.py",
+    "tests/test_main.py"
+  ],
+  "original_project_modified": false,
+  "recorded_main_scores_unchanged": true,
+  "experiments_run": false,
+  "tests_run": false,
+  "runtime_reorganization_verified": false,
+  "limitations": [
+    "Static checks only for this layout",
+    "Historical CUDA/CPU MLP numerical equivalence remains uncertified"
+  ]
+}

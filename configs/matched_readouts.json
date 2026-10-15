@@ -1,0 +1,23 @@
+{
+  "protocol": "matched_readout_33_penalty",
+  "representations": ["canonical", "uniform", "whole_history", "morlet"],
+  "history_seconds": 16,
+  "sampling_rate_hz": 200,
+  "bin_seconds": 2,
+  "channels": 26,
+  "targets": 7,
+  "target_column_order": ["Thalamus", "Putamen", "Cuneus", "Heschl's gyrus", "Middle frontal gyrus anterior", "Precuneus anterior", "Global signal"],
+  "ridge_alpha_min_log10": -1,
+  "ridge_alpha_max_log10": 7,
+  "ridge_alpha_count": 33,
+  "reference_ridge_mean_tolerance": 0.0001,
+  "reference_ridge_roi_tolerance": 0.001,
+  "epochs": 60,
+  "patience": 12,
+  "batch_size": 128,
+  "learning_rate": 0.001,
+  "weight_decay": 0.001,
+  "hidden_dim": 16,
+  "dropout": 0.1,
+  "seeds": [1, 2, 3, 4, 5]
+}

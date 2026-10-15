@@ -1,0 +1,127 @@
+[
+  {
+    "path": ".gitattributes",
+    "bytes": 19,
+    "sha256": "d60f352d0db1404c70afb4bb8b2ca3fd1c610572aa40720e8a0b7baa7885418c"
+  },
+  {
+    "path": ".gitignore",
+    "bytes": 315,
+    "sha256": "994afe7febee7620a82de34c44a1557d217293a5dd141a69aa5999ca69dba2e7"
+  },
+  {
+    "path": "CITATION.cff",
+    "bytes": 1230,
+    "sha256": "757fb692c9dc91625389fddec07208ab8985d1b9f9f306560b8bac95ec57d414"
+  },
+  {
+    "path": "configs/matched_readouts.json",
+    "bytes": 723,
+    "sha256": "fce9ce0802c2e2393a8a38e2be5d6925f16836a3f94d0bb03534f48545608cc5"
+  },
+  {
+    "path": "create_env.yaml",
+    "bytes": 188,
+    "sha256": "a55561c7be0571d91cb96f1502287cfec187ed7f38291248686680004b130a20"
+  },
+  {
+    "path": "data/__init__.py",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "data/features.py",
+    "bytes": 6696,
+    "sha256": "38799749a0f9a91b1132241dcbb987899ad74770598f6256c6fcef000923ea91"
+  },
+  {
+    "path": "data/loader.py",
+    "bytes": 3802,
+    "sha256": "125ffb6b279ed1aada27606fb8404a0f1417279ea04a9de2acf94edc7a6df274"
+  },
+  {
+    "path": "data/prepare.py",
+    "bytes": 3123,
+    "sha256": "740da498d06a06a03de442c0261f505f0ab347a5091fee9b41dc32370bbaed1d"
+  },
+  {
+    "path": "data/preprocessing.py",
+    "bytes": 1792,
+    "sha256": "e13ce027fbb22463bf034811ba5cbe15d6fcee2d270e4ce483fcacb448a7b0d2"
+  },
+  {
+    "path": "Fig/framework.png",
+    "bytes": 581659,
+    "sha256": "6c43620e5595fda8274cba53c319de59b54000ee39fb84ae13b0be91faa84a4d"
+  },
+  {
+    "path": "LICENSE",
+    "bytes": 35149,
+    "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+  },
+  {
+    "path": "model/__init__.py",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "model/mel.py",
+    "bytes": 11757,
+    "sha256": "69f74f96003cc9976cdf048838163b81618d5d90d533dbf97c08a4e8b0572a08"
+  },
+  {
+    "path": "model/run.py",
+    "bytes": 13006,
+    "sha256": "2065de0e5f67639eb1f6ef72630038b4808d8847b5e5b861a07271f16b45fa84"
+  },
+  {
+    "path": "NOTICE.md",
+    "bytes": 1432,
+    "sha256": "7bf4ca252bc735bba7dc57dc90121ca6252161572ada7f27e68eb864943fb98b"
+  },
+  {
+    "path": "provenance/main_only.json",
+    "bytes": 1505,
+    "sha256": "aa68be22b10f7441fb60731df7992108b3efe48d4dbd7403e87531e10416262b"
+  },
+  {
+    "path": "README.md",
+    "bytes": 6780,
+    "sha256": "2830a62f76503fcb071ed279e5951060dd3c55b575f3fd7c1dac6561b65cd121"
+  },
+  {
+    "path": "reference_results/readout_scan_scores.csv",
+    "bytes": 108141,
+    "sha256": "d05180764ed94174000e35be67798ab21a1a2e53fad9bc434aa7d8988c933ebe"
+  },
+  {
+    "path": "requirements-lock-windows-cpu-py311.txt",
+    "bytes": 722,
+    "sha256": "350654ef7e444777bc2cbc2a7743b8f5258339b08bcfbfc07f98f3a087bcf6e0"
+  },
+  {
+    "path": "requirements-preprocessing.txt",
+    "bytes": 47,
+    "sha256": "a9619357795531fe6f3c4c2034b3af85ed9d2d8da1f655a4760372259b6c9eb7"
+  },
+  {
+    "path": "requirements.txt",
+    "bytes": 96,
+    "sha256": "ce8b316394307cb3392a0c77168ab55b7b591a4686ced2778cfd184ce4ac5e1c"
+  },
+  {
+    "path": "run_mlp.sh",
+    "bytes": 331,
+    "sha256": "ef2f7c378b9f4edd699165a6e23eeaeecf910b9d2ecdecf5dd449080afda3485"
+  },
+  {
+    "path": "run_ridge.sh",
+    "bytes": 329,
+    "sha256": "6800cea8ab81aae6c28f5437802c0a06521d8904f2577c060ff5485a42309327"
+  },
+  {
+    "path": "tests/test_main.py",
+    "bytes": 6815,
+    "sha256": "83dfc95ea9aa822424e09187a00d2ef70e84007b105e737e1935565f211c38f2"
+  }
+]
